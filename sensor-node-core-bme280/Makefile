@@ -36,20 +36,12 @@ BUILD_DIR = build
 ######################################
 # C sources
 C_SOURCES =  \
-Src/main.c \
-Src/gpio.c \
-Src/spi.c \
-Src/stm32l0xx_it.c \
-/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_gpio.c \
-/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_spi.c \
-/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_dma.c \
-/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_pwr.c \
-/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_exti.c \
-/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_rcc.c \
-/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_utils.c \
-Src/system_stm32l0xx.c  \
-Src/rfm98_glue.c \
-Src/rfm9x.c
+src/main.c \
+src/delay.c \
+src/pin_reset.c \
+src/spi.c \
+src/system_stm32l0xx.c  \
+src/rfm9x.c
 
 # ASM sources
 ASM_SOURCES =  \
@@ -97,7 +89,6 @@ AS_DEFS =
 
 # C defines
 C_DEFS =  \
--DUSE_FULL_LL_DRIVER \
 -DHSE_VALUE=8000000 \
 -DHSE_STARTUP_TIMEOUT=100 \
 -DLSE_STARTUP_TIMEOUT=5000 \
@@ -117,10 +108,8 @@ AS_INCLUDES =
 
 # C includes
 C_INCLUDES =  \
--IInc \
--I/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/STM32L0xx_HAL_Driver/Inc \
+-Iinc \
 -I/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/CMSIS/Device/ST/STM32L0xx/Include \
--I/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/CMSIS/Include \
 -I/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/CMSIS/Include
 
 

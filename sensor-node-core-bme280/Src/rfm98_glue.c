@@ -11,23 +11,31 @@ void RFM98Glue_Init(rfm9x_t* const rfm98) {
   LL_SPI_Enable(SPI1);
 }
 
-void RFM98Glue_Set_Reset_Pin() {
+rfm9x_result_t RFM98Glue_Set_Reset_Pin() {
   LL_GPIO_SetOutputPin(RFM_RESET_GPIO_Port, RFM_RESET_Pin);
+
+  return RFM9X_RESULT_OK;
 }
 
-void RFM98Glue_Reset_Reset_Pin() {
+rfm9x_result_t RFM98Glue_Reset_Reset_Pin() {
   LL_GPIO_ResetOutputPin(RFM_RESET_GPIO_Port, RFM_RESET_Pin);
+
+  return RFM9X_RESULT_OK;
 }
 
-void RFM98Glue_Set_NSS_Pin() {
+rfm9x_result_t RFM98Glue_Set_NSS_Pin() {
   LL_GPIO_SetOutputPin(SPI1_NCS_GPIO_Port, SPI1_NCS_Pin);
+
+  return RFM9X_RESULT_OK;
 }
 
-void RFM98Glue_Reset_NSS_Pin() {
+rfm9x_result_t RFM98Glue_Reset_NSS_Pin() {
   LL_GPIO_ResetOutputPin(SPI1_NCS_GPIO_Port, SPI1_NCS_Pin);
+
+  return RFM9X_RESULT_OK;
 }
 
-void RFM98Glue_SPI_Transfer(uint8_t* const data) {
+rfm9x_result_t RFM98Glue_SPI_Transfer(uint8_t* const data) {
   // LL_SPI_EnableIT_TXE(SPI1);
   // while (!LL_SPI_IsActiveFlag_TXE(SPI1)) {
   //   __WFI();
@@ -38,8 +46,12 @@ void RFM98Glue_SPI_Transfer(uint8_t* const data) {
   while (!LL_SPI_IsActiveFlag_RXNE(SPI1)) {}
   *data = LL_SPI_ReceiveData8(SPI1);
   while (LL_SPI_IsActiveFlag_RXNE(SPI1)) {}
+
+  return RFM9X_RESULT_OK;
 }
 
-void RFM98Glue_Delay(uint8_t millisec) {
+rfm9x_result_t RFM98Glue_Delay(uint8_t millisec) {
   LL_mDelay(millisec);
+
+  return RFM9X_RESULT_OK;
 }

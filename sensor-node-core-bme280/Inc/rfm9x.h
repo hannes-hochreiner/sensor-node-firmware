@@ -3,10 +3,14 @@
 #include "stdio.h"
 #include "stdint.h"
 
-typedef void(*void_func)();
-typedef void(*delay_func)(uint8_t millisec);
-typedef void(*spi_transfer_func)(uint8_t* const data);
-typedef void(*read_func)(const uint8_t* const data, uint8_t length);
+typedef enum {
+  RFM9X_RESULT_OK,
+  RFM9X_RESULT_ERROR
+} rfm9x_result_t;
+typedef rfm9x_result_t (*void_func)();
+typedef rfm9x_result_t (*delay_func)(uint8_t millisec);
+typedef rfm9x_result_t (*spi_transfer_func)(uint8_t* const data);
+typedef rfm9x_result_t (*read_func)(const uint8_t* const data, uint8_t length);
 typedef struct {
   void_func set_reset_pin;
   void_func reset_reset_pin;
@@ -48,22 +52,22 @@ typedef enum {
   RFM9X_FREQ_DEV_50KHZ = 0x0334
 } rfm9x_freq_dev_t;
 
-void RFM9X_Init(const rfm9x_t* const rfm9x);
-void RFM9X_Reset(const rfm9x_t* const rfm9x);
-void RFM9X_GetVersion(const rfm9x_t* const rfm9x, uint8_t* const version);
-void RFM9X_GetFrequency(const rfm9x_t* const rfm9x, uint32_t* const frequencyHz);
-void RFM9X_GetSyncWord(const rfm9x_t* const rfm9x, uint8_t syncWord[8], uint8_t* const length);
-void RFM9X_SetSyncWord(const rfm9x_t* const rfm9x, const uint8_t* const syncWord, uint8_t length);
-void RFM9X_GetMode(const rfm9x_t* const rfm9x, rfm9x_mode_t* const mode);
-void RFM9X_SetMode(const rfm9x_t* const rfm9x, const rfm9x_mode_t* const mode);
-void RFM9X_GetFlags(const rfm9x_t* const rfm9x, uint16_t* const flags);
-void RFM9X_SetBitrate(const rfm9x_t* const rfm9x, const uint32_t* const bitrate);
-void RFM9X_GetBitrate(const rfm9x_t* const rfm9x, uint32_t* const bitrate);
-void RFM9X_WriteMessage(const rfm9x_t* const rfm9x, uint8_t* const data, uint8_t length);
-void RFM9X_ReadMessage(const rfm9x_t* const rfm9x, read_func callback);
-void RFM9X_SetCrcAutoClearMode(const rfm9x_t* const rfm9x, const rfm9x_crc_autoclear_mode_t* const mode);
-void RFM9X_SetFreqDev(const rfm9x_t* const rfm9x, const rfm9x_freq_dev_t* const freqDev);
-void RFM9X_SetPower(const rfm9x_t* const rfm9x, const uint8_t* const outputPower);
-void RFM9X_GetPower(const rfm9x_t* const rfm9x, uint8_t* const outputPower);
-void RFM9X_GetRSSIValue(const rfm9x_t* const rfm9x, uint8_t* const rssiValue);
+rfm9x_result_t RFM9X_Init(const rfm9x_t* const rfm9x);
+rfm9x_result_t RFM9X_Reset(const rfm9x_t* const rfm9x);
+rfm9x_result_t RFM9X_GetVersion(const rfm9x_t* const rfm9x, uint8_t* const version);
+rfm9x_result_t RFM9X_GetFrequency(const rfm9x_t* const rfm9x, uint32_t* const frequencyHz);
+rfm9x_result_t RFM9X_GetSyncWord(const rfm9x_t* const rfm9x, uint8_t syncWord[8], uint8_t* const length);
+rfm9x_result_t RFM9X_SetSyncWord(const rfm9x_t* const rfm9x, const uint8_t* const syncWord, uint8_t length);
+rfm9x_result_t RFM9X_GetMode(const rfm9x_t* const rfm9x, rfm9x_mode_t* const mode);
+rfm9x_result_t RFM9X_SetMode(const rfm9x_t* const rfm9x, const rfm9x_mode_t* const mode);
+rfm9x_result_t RFM9X_GetFlags(const rfm9x_t* const rfm9x, uint16_t* const flags);
+rfm9x_result_t RFM9X_SetBitrate(const rfm9x_t* const rfm9x, const uint32_t* const bitrate);
+rfm9x_result_t RFM9X_GetBitrate(const rfm9x_t* const rfm9x, uint32_t* const bitrate);
+rfm9x_result_t RFM9X_WriteMessage(const rfm9x_t* const rfm9x, uint8_t* const data, uint8_t length);
+rfm9x_result_t RFM9X_ReadMessage(const rfm9x_t* const rfm9x, read_func callback);
+rfm9x_result_t RFM9X_SetCrcAutoClearMode(const rfm9x_t* const rfm9x, const rfm9x_crc_autoclear_mode_t* const mode);
+rfm9x_result_t RFM9X_SetFreqDev(const rfm9x_t* const rfm9x, const rfm9x_freq_dev_t* const freqDev);
+rfm9x_result_t RFM9X_SetPower(const rfm9x_t* const rfm9x, const uint8_t* const outputPower);
+rfm9x_result_t RFM9X_GetPower(const rfm9x_t* const rfm9x, uint8_t* const outputPower);
+rfm9x_result_t RFM9X_GetRSSIValue(const rfm9x_t* const rfm9x, uint8_t* const rssiValue);
 #endif

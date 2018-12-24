@@ -8,5 +8,6 @@
 #include "rfm9x.h"
 #include "i2c.h"
 #include "bme280.h"
+#include "bme280_selftest.h"
 
 #endif

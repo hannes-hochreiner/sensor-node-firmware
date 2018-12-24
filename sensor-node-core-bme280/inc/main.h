@@ -7,5 +7,6 @@
 #include "pin_reset.h"
 #include "rfm9x.h"
 #include "i2c.h"
+#include "bme280.h"
 
 #endif

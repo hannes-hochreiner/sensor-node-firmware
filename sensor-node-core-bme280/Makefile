@@ -42,7 +42,8 @@ src/pin_reset.c \
 src/spi.c \
 src/system_stm32l0xx.c  \
 src/rfm9x.c \
-src/i2c.c
+src/i2c.c \
+src/bme280.c
 
 # ASM sources
 ASM_SOURCES =  \

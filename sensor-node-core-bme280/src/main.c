@@ -9,6 +9,22 @@ int main() {
   pin_reset_init();
   i2c_init();
 
+  struct bme280_dev bme280;
+  volatile int8_t rslt = BME280_OK;
+
+  bme280.dev_id = BME280_I2C_ADDR_PRIM;
+  bme280.intf = BME280_I2C_INTF;
+  bme280.read = i2c_read;
+  bme280.write = i2c_write;
+  bme280.delay_ms = delay;
+  bme280.settings.osr_h = BME280_OVERSAMPLING_1X;
+  bme280.settings.osr_p = BME280_OVERSAMPLING_1X;
+  bme280.settings.osr_t = BME280_OVERSAMPLING_1X;
+  bme280.settings.filter = BME280_FILTER_COEFF_OFF;
+
+  rslt = bme280_init(&bme280);
+  rslt = bme280_set_sensor_settings(BME280_OSR_PRESS_SEL | BME280_OSR_TEMP_SEL | BME280_OSR_HUM_SEL | BME280_FILTER_SEL, &bme280);
+
   rfm9x_t rfm98 = {
     pin_reset_set,
     pin_reset_reset,
@@ -29,10 +45,15 @@ int main() {
   RFM9X_SetMode(&rfm98, &setMode);
 
   while (1) {
-    volatile uint8_t data[] = {0x00};
-    volatile int8_t res = i2c_read(0x76, 0xD0, data, 1);
+    volatile struct bme280_data comp_data;
 
-    volatile uint8_t d = data[0];
+    rslt = bme280_set_sensor_mode(BME280_FORCED_MODE, &bme280);
+    bme280.delay_ms(40);
+    rslt = bme280_get_sensor_data(BME280_ALL, &comp_data, &bme280);
+
+    volatile float press = (float)comp_data.pressure / 100;
+    volatile float temp = (float)comp_data.temperature / 100;
+    volatile float hum = (float)comp_data.humidity / 1024;
 
     uint8_t text[] = "Hello World! Hello World!";
     RFM9X_WriteMessage(&rfm98, text, 25);

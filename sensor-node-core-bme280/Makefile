@@ -43,7 +43,8 @@ src/spi.c \
 src/system_stm32l0xx.c  \
 src/rfm9x.c \
 src/i2c.c \
-src/bme280.c
+src/bme280.c \
+src/bme280_selftest.c
 
 # ASM sources
 ASM_SOURCES =  \

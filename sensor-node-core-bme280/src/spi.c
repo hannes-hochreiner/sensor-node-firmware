@@ -24,7 +24,6 @@ void spi_init() {
 
   GPIOA->BSRR = (GPIO_BSRR_BS_4);
  
-  // GPIOA->AFR[0] = 
   // RX channel 2
   // TX channel 3
   // set CMAR (MA), CPAR (PA), CNDTR (NDT), CCR (EN)

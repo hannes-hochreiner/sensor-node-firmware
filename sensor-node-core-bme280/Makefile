@@ -41,12 +41,12 @@ src/delay.c \
 src/pin_reset.c \
 src/spi.c \
 src/system_stm32l0xx.c  \
-src/rfm9x.c
+src/rfm9x.c \
+src/i2c.c
 
 # ASM sources
 ASM_SOURCES =  \
 startup_stm32l021xx.s
-
 
 #######################################
 # binaries

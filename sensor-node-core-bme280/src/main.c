@@ -7,6 +7,7 @@ int main() {
 
   spi_init();
   pin_reset_init();
+  i2c_init();
 
   rfm9x_t rfm98 = {
     pin_reset_set,
@@ -28,6 +29,9 @@ int main() {
   RFM9X_SetMode(&rfm98, &setMode);
 
   while (1) {
+    volatile uint8_t data[] = {0x00};
+    volatile int8_t res = i2c_read(0x3B, 0xD0, data, 1);
+
     uint8_t text[] = "Hello World! Hello World!";
     RFM9X_WriteMessage(&rfm98, text, 25);
 

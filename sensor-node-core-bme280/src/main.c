@@ -17,9 +17,9 @@ int main() {
   bme280.read = i2c_read;
   bme280.write = i2c_write;
   bme280.delay_ms = delay;
-  bme280.settings.osr_h = BME280_OVERSAMPLING_4X;
-  bme280.settings.osr_p = BME280_OVERSAMPLING_4X;
-  bme280.settings.osr_t = BME280_OVERSAMPLING_4X;
+  bme280.settings.osr_h = BME280_OVERSAMPLING_1X;
+  bme280.settings.osr_p = BME280_OVERSAMPLING_1X;
+  bme280.settings.osr_t = BME280_OVERSAMPLING_1X;
   bme280.settings.filter = BME280_FILTER_COEFF_OFF;
 
   rslt = bme280_init(&bme280);
@@ -50,8 +50,15 @@ int main() {
     volatile struct bme280_data comp_data;
 
     bme280_soft_reset(&bme280);
-    rslt = bme280_set_sensor_mode(BME280_FORCED_MODE, &bme280);
-    bme280.delay_ms(40);
+    uint8_t bme280Mode = BME280_FORCED_MODE;
+
+    rslt = bme280_set_sensor_mode(bme280Mode, &bme280);
+
+    while (bme280Mode != BME280_SLEEP_MODE) {
+      delay(1);
+      rslt = bme280_get_sensor_mode(&bme280Mode, &bme280);
+    }
+
     rslt = bme280_get_sensor_data(BME280_ALL, &comp_data, &bme280);
 
     volatile float press = (float)comp_data.pressure / 100;

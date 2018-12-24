@@ -1,7 +1,7 @@
 #include "i2c.h"
 
-static status_t status_dma_tx;
-static status_t status_dma_rx;
+volatile static status_t status_dma_tx;
+volatile static status_t status_dma_rx;
 
 // PB6 SCL
 // PB7 SDA
@@ -56,6 +56,7 @@ int8_t i2c_write(uint8_t dev_id, uint8_t reg_addr, uint8_t *data, uint16_t len) 
   }
 
   I2C1->CR1 &= ~(I2C_CR1_PE);
+  NVIC_DisableIRQ(DMA1_Channel4_5_6_7_IRQn);
   DMA1_Channel4->CCR &= ~(DMA_CCR_EN);
 
   if (status_dma_tx == STATUS_OK) {
@@ -87,11 +88,8 @@ int8_t i2c_read(uint8_t dev_id, uint8_t reg_addr, uint8_t *data, uint16_t len) {
   I2C1->CR1 |= I2C_CR1_PE;
   I2C1->CR2 = (1 << (I2C_CR2_NBYTES_Pos)) | (I2C_CR2_START) | (a << I2C_CR2_SADD_Pos);
 
-  volatile uint32_t i2c_status = I2C1->ISR;
-
   while (status_dma_tx == STATUS_PENDING) {
     __WFI();
-    i2c_status = I2C1->ISR;
   }
 
   I2C1->CR2 = (I2C_CR2_AUTOEND) | (l << (I2C_CR2_NBYTES_Pos)) | (I2C_CR2_START) | (a << I2C_CR2_SADD_Pos) | (I2C_CR2_RD_WRN);
@@ -101,7 +99,8 @@ int8_t i2c_read(uint8_t dev_id, uint8_t reg_addr, uint8_t *data, uint16_t len) {
   }
 
   I2C1->CR1 &= ~(I2C_CR1_PE);
-  DMA1_Channel4->CCR |= (DMA_CCR_EN);
+  NVIC_DisableIRQ(DMA1_Channel4_5_6_7_IRQn);
+  DMA1_Channel4->CCR &= ~(DMA_CCR_EN);
   DMA1_Channel5->CCR &= ~(DMA_CCR_EN);
 
   if ((status_dma_tx == STATUS_OK) && (status_dma_rx == STATUS_OK)) {

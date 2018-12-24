@@ -51,6 +51,15 @@ int8_t i2c_write(uint8_t dev_id, uint8_t reg_addr, uint8_t *data, uint16_t len) 
   I2C1->CR1 |= I2C_CR1_PE;
   I2C1->CR2 = (I2C_CR2_AUTOEND) | (l << (I2C_CR2_NBYTES_Pos)) | (I2C_CR2_START) | (a << I2C_CR2_SADD_Pos);
 
+  uint32_t i2c_status = I2C1->ISR;
+
+  if (((i2c_status & (I2C_ISR_BERR)) == (I2C_ISR_BERR)) || 
+      ((i2c_status & (I2C_ISR_TIMEOUT)) == (I2C_ISR_TIMEOUT)) ||
+      ((i2c_status & (I2C_ISR_ARLO)) == (I2C_ISR_ARLO)) ||
+      ((i2c_status & (I2C_ISR_OVR)) == (I2C_ISR_OVR))) {
+    return 1;
+  }
+
   while (status_dma_tx == STATUS_PENDING) {
     __WFI();
   }
@@ -59,11 +68,20 @@ int8_t i2c_write(uint8_t dev_id, uint8_t reg_addr, uint8_t *data, uint16_t len) 
   NVIC_DisableIRQ(DMA1_Channel4_5_6_7_IRQn);
   DMA1_Channel4->CCR &= ~(DMA_CCR_EN);
 
-  if (status_dma_tx == STATUS_OK) {
-    return 0;
+  if (status_dma_tx != STATUS_OK) {
+    return 1;
   }
 
-  return 1;
+  i2c_status = I2C1->ISR;
+
+  if (((i2c_status & (I2C_ISR_BERR)) == (I2C_ISR_BERR)) || 
+      ((i2c_status & (I2C_ISR_TIMEOUT)) == (I2C_ISR_TIMEOUT)) ||
+      ((i2c_status & (I2C_ISR_ARLO)) == (I2C_ISR_ARLO)) ||
+      ((i2c_status & (I2C_ISR_OVR)) == (I2C_ISR_OVR))) {
+    return 1;
+  }
+
+  return 0;
 }
 
 int8_t i2c_read(uint8_t dev_id, uint8_t reg_addr, uint8_t *data, uint16_t len) {
@@ -88,11 +106,29 @@ int8_t i2c_read(uint8_t dev_id, uint8_t reg_addr, uint8_t *data, uint16_t len) {
   I2C1->CR1 |= I2C_CR1_PE;
   I2C1->CR2 = (1 << (I2C_CR2_NBYTES_Pos)) | (I2C_CR2_START) | (a << I2C_CR2_SADD_Pos);
 
+  uint32_t i2c_status = I2C1->ISR;
+
+  if (((i2c_status & (I2C_ISR_BERR)) == (I2C_ISR_BERR)) || 
+      ((i2c_status & (I2C_ISR_TIMEOUT)) == (I2C_ISR_TIMEOUT)) ||
+      ((i2c_status & (I2C_ISR_ARLO)) == (I2C_ISR_ARLO)) ||
+      ((i2c_status & (I2C_ISR_OVR)) == (I2C_ISR_OVR))) {
+    return 1;
+  }
+
   while (status_dma_tx == STATUS_PENDING) {
     __WFI();
   }
 
   I2C1->CR2 = (I2C_CR2_AUTOEND) | (l << (I2C_CR2_NBYTES_Pos)) | (I2C_CR2_START) | (a << I2C_CR2_SADD_Pos) | (I2C_CR2_RD_WRN);
+
+  i2c_status = I2C1->ISR;
+
+  if (((i2c_status & (I2C_ISR_BERR)) == (I2C_ISR_BERR)) || 
+      ((i2c_status & (I2C_ISR_TIMEOUT)) == (I2C_ISR_TIMEOUT)) ||
+      ((i2c_status & (I2C_ISR_ARLO)) == (I2C_ISR_ARLO)) ||
+      ((i2c_status & (I2C_ISR_OVR)) == (I2C_ISR_OVR))) {
+    return 1;
+  }
 
   while (status_dma_rx == STATUS_PENDING) {
     __WFI();
@@ -103,11 +139,20 @@ int8_t i2c_read(uint8_t dev_id, uint8_t reg_addr, uint8_t *data, uint16_t len) {
   DMA1_Channel4->CCR &= ~(DMA_CCR_EN);
   DMA1_Channel5->CCR &= ~(DMA_CCR_EN);
 
-  if ((status_dma_tx == STATUS_OK) && (status_dma_rx == STATUS_OK)) {
-    return 0;
+  i2c_status = I2C1->ISR;
+
+  if (((i2c_status & (I2C_ISR_BERR)) == (I2C_ISR_BERR)) || 
+      ((i2c_status & (I2C_ISR_TIMEOUT)) == (I2C_ISR_TIMEOUT)) ||
+      ((i2c_status & (I2C_ISR_ARLO)) == (I2C_ISR_ARLO)) ||
+      ((i2c_status & (I2C_ISR_OVR)) == (I2C_ISR_OVR))) {
+    return 1;
   }
 
-  return 1;
+  if ((status_dma_tx != STATUS_OK) || (status_dma_rx != STATUS_OK)) {
+    return 1;
+  }
+
+  return 0;
 }
 
 void DMA1_Channel4_5_6_7_IRQHandler() {

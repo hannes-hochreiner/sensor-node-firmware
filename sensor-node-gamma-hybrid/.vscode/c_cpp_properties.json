@@ -1,0 +1,31 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/CMSIS/Device/ST/STM32L0xx/Include",
+                "/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/CMSIS/Include"
+            ],
+            "defines": [
+              "HSE_VALUE=8000000",
+              "HSE_STARTUP_TIMEOUT=100",
+              "LSE_STARTUP_TIMEOUT=5000",
+              "LSE_VALUE=32768",
+              "MSI_VALUE=2097000",
+              "HSI_VALUE=16000000",
+              "LSI_VALUE=37000",
+              "VDD_VALUE=3300",
+              "PREFETCH_ENABLE=0",
+              "INSTRUCTION_CACHE_ENABLE=1",
+              "DATA_CACHE_ENABLE=1",
+              "STM32L021xx"
+            ],
+            "compilerPath": "/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}

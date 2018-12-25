@@ -65,6 +65,8 @@ int main() {
     volatile float temp = (float)comp_data.temperature / 100;
     volatile float hum = (float)comp_data.humidity / 1024;
 
+    // 1011.87 mbar; 23.21 °C; 44.80 %
+
     uint8_t text[] = "Hello World! Hello World!";
     RFM9X_WriteMessage(&rfm98, text, 25);
 

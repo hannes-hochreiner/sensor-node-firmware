@@ -6,7 +6,8 @@
 result_t shtc3_get_data(const shtc3_t*const shtc3, shtc3_data_t*const data) {
   uint8_t com_wakeup[] = {0x35, 0x17};
   if (shtc3->i2c_write(shtc3->address, com_wakeup, 2) == RESULT_ERROR) {
-    return RESULT_ERROR;
+    // the sensor needs some time to wake up (~.5 ms), so it's ok to get a NACK on the wakeup request
+    shtc3->delay(1);
   }
 
   uint8_t com_id[] = {0xEF, 0xC8};

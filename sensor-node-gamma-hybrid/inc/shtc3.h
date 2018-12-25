@@ -6,6 +6,7 @@
 
 #define SHTC3_ADDRESS 0x70
 
+typedef result_t (*shtc3_delay)(uint16_t ms);
 typedef result_t (*shtc3_read_func)(uint8_t address, uint8_t *data, uint8_t length);
 typedef result_t (*shtc3_write_func)(uint8_t address, uint8_t *data, uint8_t length);
 typedef result_t (*shtc3_crc_func)(uint8_t poly, uint8_t init, uint8_t* data, uint16_t length, uint8_t* result);
@@ -14,6 +15,7 @@ typedef struct {
   shtc3_read_func i2c_read;
   shtc3_write_func i2c_write;
   shtc3_crc_func crc_8;
+  shtc3_delay delay;
 } shtc3_t;
 
 typedef struct {

@@ -28,7 +28,7 @@ void i2c_init() {
   DMA1_CSELR->CSELR |= (0b0110 << (DMA_CSELR_C4S_Pos)) | (0b0110 << (DMA_CSELR_C5S_Pos));
 
   // timing: 0x708 for 2.097 MHz clock in normal mode (100 kHz)
-  I2C1->CR1 = (I2C_CR1_TXDMAEN) | (I2C_CR1_RXDMAEN);
+  // I2C1->CR1 = (I2C_CR1_TXDMAEN) | (I2C_CR1_RXDMAEN);
   I2C1->TIMINGR = (uint32_t)0x00000708;
 }
 
@@ -37,32 +37,45 @@ result_t i2c_write(uint8_t address, uint8_t *data, uint8_t length) {
 
   status_dma_tx = STATUS_PENDING;
 
-  DMA1_Channel4->CNDTR = length;
-  DMA1_Channel4->CPAR = (uint32_t)(&(I2C1->TXDR));
-  DMA1_Channel4->CMAR = (uint32_t)data;
-  DMA1_Channel4->CCR |= (DMA_CCR_EN);
+  // DMA1_Channel4->CNDTR = length;
+  // DMA1_Channel4->CPAR = (uint32_t)((uint8_t*)&(I2C1->TXDR));
+  // DMA1_Channel4->CMAR = (uint32_t)data;
 
-  NVIC_EnableIRQ(DMA1_Channel4_5_6_7_IRQn);
+  // NVIC_EnableIRQ(DMA1_Channel4_5_6_7_IRQn);
 
   I2C1->CR1 |= I2C_CR1_PE;
-  I2C1->CR2 = (I2C_CR2_AUTOEND) | (length << (I2C_CR2_NBYTES_Pos)) | (I2C_CR2_START) | (a << I2C_CR2_SADD_Pos);
+  I2C1->CR2 = (I2C_CR2_AUTOEND) | (length << (I2C_CR2_NBYTES_Pos)) | (a << I2C_CR2_SADD_Pos);
+  I2C1->CR2 |= (I2C_CR2_START);
 
-  uint32_t i2c_status = I2C1->ISR;
+  volatile cr2 = I2C1->CR2;
 
-  if (((i2c_status & (I2C_ISR_BERR)) == (I2C_ISR_BERR)) || 
-      ((i2c_status & (I2C_ISR_TIMEOUT)) == (I2C_ISR_TIMEOUT)) ||
-      ((i2c_status & (I2C_ISR_ARLO)) == (I2C_ISR_ARLO)) ||
-      ((i2c_status & (I2C_ISR_OVR)) == (I2C_ISR_OVR))) {
-    return RESULT_ERROR;
+  volatile uint32_t i2c_status = I2C1->ISR;
+
+  // if (((i2c_status & (I2C_ISR_BERR)) == (I2C_ISR_BERR)) || 
+  //     ((i2c_status & (I2C_ISR_TIMEOUT)) == (I2C_ISR_TIMEOUT)) ||
+  //     ((i2c_status & (I2C_ISR_ARLO)) == (I2C_ISR_ARLO)) ||
+  //     ((i2c_status & (I2C_ISR_OVR)) == (I2C_ISR_OVR))) {
+  //   return RESULT_ERROR;
+  // }
+
+  volatile uint8_t cntr = 0;
+
+  while ((i2c_status & (I2C_ISR_STOPF)) != (I2C_ISR_STOPF)) {
+    if ((i2c_status & (I2C_ISR_TXIS)) == (I2C_ISR_TXIS)) {
+      *(uint8_t*)&(I2C1->TXDR) = *(data + cntr++);
+    }
+
+    i2c_status = I2C1->ISR;
   }
 
-  while (status_dma_tx == STATUS_PENDING) {
-    __WFI();
-  }
+  // DMA1_Channel4->CCR |= (DMA_CCR_EN);
 
-  I2C1->CR1 &= ~(I2C_CR1_PE);
-  NVIC_DisableIRQ(DMA1_Channel4_5_6_7_IRQn);
-  DMA1_Channel4->CCR &= ~(DMA_CCR_EN);
+  // while (status_dma_tx == STATUS_PENDING) {
+  //   __WFI();
+  // }
+
+  // NVIC_DisableIRQ(DMA1_Channel4_5_6_7_IRQn);
+  // DMA1_Channel4->CCR &= ~(DMA_CCR_EN);
 
   i2c_status = I2C1->ISR;
 
@@ -73,9 +86,11 @@ result_t i2c_write(uint8_t address, uint8_t *data, uint8_t length) {
     return RESULT_ERROR;
   }
 
-  if (status_dma_tx != STATUS_OK) {
-    return RESULT_ERROR;
-  }
+  I2C1->CR1 &= ~(I2C_CR1_PE);
+
+  // if (status_dma_tx != STATUS_OK) {
+  //   return RESULT_ERROR;
+  // }
 
   return RESULT_OK;
 }
@@ -83,19 +98,19 @@ result_t i2c_write(uint8_t address, uint8_t *data, uint8_t length) {
 result_t i2c_read(uint8_t address, uint8_t *data, uint8_t length) {
   uint8_t a = (address & 0x7F) << 1;
 
-  status_dma_rx = STATUS_PENDING;
+  // status_dma_rx = STATUS_PENDING;
 
-  DMA1_Channel5->CNDTR = length;
-  DMA1_Channel5->CPAR = (uint32_t)(&(I2C1->RXDR));
-  DMA1_Channel5->CMAR = (uint32_t)data;
-  DMA1_Channel5->CCR |= (DMA_CCR_EN);
+  // DMA1_Channel5->CNDTR = length;
+  // DMA1_Channel5->CPAR = (uint32_t)((uint8_t*)&(I2C1->RXDR));
+  // DMA1_Channel5->CMAR = (uint32_t)data;
 
-  NVIC_EnableIRQ(DMA1_Channel4_5_6_7_IRQn);
+  // NVIC_EnableIRQ(DMA1_Channel4_5_6_7_IRQn);
 
   I2C1->CR1 |= I2C_CR1_PE;
-  I2C1->CR2 = (I2C_CR2_AUTOEND) | (length << (I2C_CR2_NBYTES_Pos)) | (I2C_CR2_START) | (a << I2C_CR2_SADD_Pos) | (I2C_CR2_RD_WRN);
+  I2C1->CR2 = (I2C_CR2_AUTOEND) | (length << (I2C_CR2_NBYTES_Pos)) | (a << I2C_CR2_SADD_Pos) | (I2C_CR2_RD_WRN);
+  I2C1->CR2 |= (I2C_CR2_START);
 
-  uint32_t i2c_status = I2C1->ISR;
+  volatile uint32_t i2c_status = I2C1->ISR;
 
   if (((i2c_status & (I2C_ISR_BERR)) == (I2C_ISR_BERR)) || 
       ((i2c_status & (I2C_ISR_TIMEOUT)) == (I2C_ISR_TIMEOUT)) ||
@@ -104,14 +119,24 @@ result_t i2c_read(uint8_t address, uint8_t *data, uint8_t length) {
     return RESULT_ERROR;
   }
 
-  while (status_dma_rx == STATUS_PENDING) {
-    __WFI();
+  // DMA1_Channel5->CCR |= (DMA_CCR_EN);
+
+  // while (status_dma_rx == STATUS_PENDING) {
+  //   __WFI();
+  // }
+
+  volatile uint8_t cntr = 0;
+
+  while ((i2c_status & (I2C_ISR_STOPF)) != (I2C_ISR_STOPF)) {
+    if ((i2c_status & (I2C_ISR_RXNE)) == (I2C_ISR_RXNE)) {
+      *(data + cntr++) = *(uint8_t*)&(I2C1->RXDR);
+    }
+
+    i2c_status = I2C1->ISR;
   }
 
-  I2C1->CR1 &= ~(I2C_CR1_PE);
-
-  NVIC_DisableIRQ(DMA1_Channel4_5_6_7_IRQn);
-  DMA1_Channel5->CCR &= ~(DMA_CCR_EN);
+  // NVIC_DisableIRQ(DMA1_Channel4_5_6_7_IRQn);
+  // DMA1_Channel5->CCR &= ~(DMA_CCR_EN);
 
   i2c_status = I2C1->ISR;
 
@@ -122,9 +147,11 @@ result_t i2c_read(uint8_t address, uint8_t *data, uint8_t length) {
     return RESULT_ERROR;
   }
 
-  if (status_dma_rx != STATUS_OK) {
-    return RESULT_ERROR;
-  }
+  I2C1->CR1 &= ~(I2C_CR1_PE);
+
+  // if (status_dma_rx != STATUS_OK) {
+  //   return RESULT_ERROR;
+  // }
 
   return RESULT_OK;
 }

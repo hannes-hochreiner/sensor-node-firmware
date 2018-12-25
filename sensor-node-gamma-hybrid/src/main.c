@@ -36,7 +36,7 @@ int main() {
   RFM9X_SetMode(&rfm98, &setMode);
 
   while (1) {
-    shtc3_data_t shtc3_data;
+    volatile shtc3_data_t shtc3_data;
 
     shtc3_get_data(&shtc3, &shtc3_data);
 

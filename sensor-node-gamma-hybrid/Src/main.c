@@ -119,35 +119,50 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    LL_I2C_EnableClockStretching(&hi2c1);
-    LL_I2C_Enable(&hi2c1);
+    uint8_t i2c_address = (0x70 << 1);
+    volatile HAL_StatusTypeDef hal_status = HAL_I2C_IsDeviceReady(&hi2c1, i2c_address, 10, 1000);
+    uint8_t com_wakeup[] = {0x35, 0x17};
+    hal_status = HAL_I2C_Master_Transmit(&hi2c1, i2c_address, com_wakeup, 2, 1000);
+    uint8_t com_meas[] = {0x7C, 0xA2};
+    hal_status = HAL_I2C_Master_Transmit(&hi2c1, i2c_address, com_meas, 2, 1000);
+    uint8_t raw_data[6];
+    hal_status = HAL_I2C_Master_Receive(&hi2c1, i2c_address, raw_data, 6, 1000);
+
+    volatile uint16_t raw_temp = (raw_data[0] << 8) + raw_data[1];
+    volatile uint16_t raw_hum = (raw_data[3] << 8) + raw_data[4];
+
+    volatile float temp = (float)raw_temp / (1 << 16) * 175 - 45;
+    volatile float hum = (float)raw_hum / (1 << 16) * 100;
+
+    // LL_I2C_EnableClockStretching(&hi2c1);
+    // LL_I2C_Enable(&hi2c1);
 
     // write 0x3517
-    LL_I2C_HandleTransfer(&hi2c1, (0x70 << 1), LL_I2C_ADDRSLAVE_7BIT, 2, LL_I2C_MODE_AUTOEND, LL_I2C_GENERATE_START_WRITE);
-    while (LL_I2C_IsActiveFlag_TXIS(&hi2c1) == 0) {}
-    LL_I2C_TransmitData8(&hi2c1, 0x35);
-    LL_I2C_TransmitData8(&hi2c1, 0x17);
-    // write 0x7CA2
-    LL_I2C_HandleTransfer(&hi2c1, (0x70 << 1), LL_I2C_ADDRSLAVE_7BIT, 2, LL_I2C_MODE_AUTOEND, LL_I2C_GENERATE_START_WRITE);
-    while (LL_I2C_IsActiveFlag_TXIS(&hi2c1) == 0) {}
-    LL_I2C_TransmitData8(&hi2c1, 0x7C);
-    LL_I2C_TransmitData8(&hi2c1, 0xA2);
-    // read 6 bytes
-    volatile uint16_t raw_temp;
-    volatile uint16_t raw_hum;
-    uint8_t crc_temp;
-    uint8_t crc_hum;
-    LL_I2C_HandleTransfer(&hi2c1, (0x70 << 1), LL_I2C_ADDRSLAVE_7BIT, 6, LL_I2C_MODE_AUTOEND, LL_I2C_GENERATE_START_READ);
-    while (LL_I2C_IsActiveFlag_RXNE(&hi2c1) == 0) {}
-    raw_temp = (LL_I2C_ReceiveData8(&hi2c1) << 8);
-    raw_temp += LL_I2C_ReceiveData8(&hi2c1);
-    crc_temp = LL_I2C_ReceiveData8(&hi2c1);
-    raw_hum = (LL_I2C_ReceiveData8(&hi2c1) << 8);
-    raw_hum += LL_I2C_ReceiveData8(&hi2c1);
-    crc_hum = LL_I2C_ReceiveData8(&hi2c1);
+    // LL_I2C_HandleTransfer(&hi2c1, (0x70 << 1), LL_I2C_ADDRSLAVE_7BIT, 2, LL_I2C_MODE_AUTOEND, LL_I2C_GENERATE_START_WRITE);
+    // while (LL_I2C_IsActiveFlag_TXE(&hi2c1) == 0) {}
+    // LL_I2C_TransmitData8(&hi2c1, 0x35);
+    // LL_I2C_TransmitData8(&hi2c1, 0x17);
+    // // write 0x7CA2
+    // LL_I2C_HandleTransfer(&hi2c1, (0x70 << 1), LL_I2C_ADDRSLAVE_7BIT, 2, LL_I2C_MODE_AUTOEND, LL_I2C_GENERATE_START_WRITE);
+    // while (LL_I2C_IsActiveFlag_TXIS(&hi2c1) == 0) {}
+    // LL_I2C_TransmitData8(&hi2c1, 0x7C);
+    // LL_I2C_TransmitData8(&hi2c1, 0xA2);
+    // // read 6 bytes
+    // volatile uint16_t raw_temp;
+    // volatile uint16_t raw_hum;
+    // uint8_t crc_temp;
+    // uint8_t crc_hum;
+    // LL_I2C_HandleTransfer(&hi2c1, (0x70 << 1), LL_I2C_ADDRSLAVE_7BIT, 6, LL_I2C_MODE_AUTOEND, LL_I2C_GENERATE_START_READ);
+    // while (LL_I2C_IsActiveFlag_RXNE(&hi2c1) == 0) {}
+    // raw_temp = (LL_I2C_ReceiveData8(&hi2c1) << 8);
+    // raw_temp += LL_I2C_ReceiveData8(&hi2c1);
+    // crc_temp = LL_I2C_ReceiveData8(&hi2c1);
+    // raw_hum = (LL_I2C_ReceiveData8(&hi2c1) << 8);
+    // raw_hum += LL_I2C_ReceiveData8(&hi2c1);
+    // crc_hum = LL_I2C_ReceiveData8(&hi2c1);
 
-    volatile float temp = ((float)raw_temp) / (2 << 16) * 175 - 45;
-    volatile float hum = ((float)raw_hum) / (2 << 16) * 100;
+    // volatile float temp = ((float)raw_temp) / (2 << 16) * 175 - 45;
+    // volatile float hum = ((float)raw_hum) / (2 << 16) * 100;
 
     volatile int tmp = 6;
 

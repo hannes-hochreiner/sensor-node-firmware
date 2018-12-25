@@ -50,6 +50,8 @@
 
 /* USER CODE END Includes */
 
+extern SPI_HandleTypeDef hspi1;
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

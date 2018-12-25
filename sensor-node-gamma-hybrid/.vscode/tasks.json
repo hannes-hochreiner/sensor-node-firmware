@@ -1,0 +1,47 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build using make",
+      "type": "shell",
+      "command": "make",
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "copy openocd config",
+      "type": "shell",
+      "command": "scp oo.cfg hc1:/tmp",
+      "presentation": {
+        "echo": true,
+        "reveal": "never",
+        "focus": false,
+        "panel": "shared"
+      },
+      "dependsOn":[
+        "build using make"
+      ]
+    },
+    {
+      "label": "remove openocd config",
+      "type": "shell",
+      "command": "ssh hc1 'rm /tmp/oo.cfg'",
+      "presentation": {
+        "echo": true,
+        "reveal": "never",
+        "focus": false,
+        "panel": "shared"
+      }
+    }
+  ]
+}

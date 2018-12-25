@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "Inc",
+                "/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/STM32L0xx_HAL_Driver/Inc",
+                "/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/STM32L0xx_HAL_Driver/Inc/Legacy",
+                "/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/CMSIS/Device/ST/STM32L0xx/Include",
+                "/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/CMSIS/Include"
+            ],
+            "defines": [
+                "USE_FULL_LL_DRIVER",
+                "USE_HAL_DRIVER",
+                "STM32L021xx"
+            ],
+            "compilerPath": "/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}

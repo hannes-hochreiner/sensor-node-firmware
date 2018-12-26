@@ -42,6 +42,7 @@ src/rfm9x.c \
 src/bme280.c \
 src/bme280_selftest.c \
 src/bme280_glue.c \
+src/rfm9x_glue.c \
 ../common/src/delay.c \
 ../common/src/spi.c \
 ../common/src/i2c.c \

@@ -2,11 +2,7 @@
 #define __MAIN_H__
 
 #include "stm32l0xx.h"
-#include "spi.h"
-#include "delay.h"
-#include "pin_reset.h"
-#include "rfm9x.h"
-#include "i2c.h"
 #include "bme280_glue.h"
+#include "rfm9x_glue.h"
 
 #endif

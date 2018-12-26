@@ -10,7 +10,6 @@ int main() {
   i2c_init();
 
   shtc3_t shtc3 = {
-    SHTC3_ADDRESS,
     i2c_read,
     i2c_write,
     crc_8,
@@ -39,7 +38,7 @@ int main() {
   while (1) {
     volatile shtc3_data_t shtc3_data;
 
-    volatile result_t res = shtc3_get_data(&shtc3, &shtc3_data);
+    volatile shtc3_result_t res = shtc3_get_data(&shtc3, &shtc3_data);
 
     uint8_t text[] = "Hello World! Hello World!";
     RFM9X_WriteMessage(&rfm98, text, 25);

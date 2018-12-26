@@ -21,10 +21,10 @@
     {
       "label": "copy openocd config",
       "type": "shell",
-      "command": "scp oo.cfg hc1:/tmp",
+      "command": "scp ../common/oo.cfg hc1:/tmp",
       "presentation": {
         "echo": true,
-        "reveal": "never",
+        "reveal": "silent",
         "focus": false,
         "panel": "shared"
       },
@@ -38,7 +38,7 @@
       "command": "ssh hc1 'rm /tmp/oo.cfg'",
       "presentation": {
         "echo": true,
-        "reveal": "never",
+        "reveal": "silent",
         "focus": false,
         "panel": "shared"
       }

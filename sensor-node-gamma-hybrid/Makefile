@@ -37,18 +37,18 @@ BUILD_DIR = build
 # C sources
 C_SOURCES =  \
 src/main.c \
-src/delay.c \
 src/pin_reset.c \
-src/spi.c \
-src/system_stm32l0xx.c  \
 src/rfm9x.c \
-src/i2c.c \
 src/shtc3.c \
-src/crc.c
+../common/src/delay.c \
+../common/src/spi.c \
+../common/src/system_stm32l0xx.c  \
+../common/src/i2c.c \
+../common/src/crc.c
 
 # ASM sources
 ASM_SOURCES =  \
-startup_stm32l021xx.s
+../common/startup_stm32l021xx.s
 
 #######################################
 # binaries
@@ -111,6 +111,7 @@ AS_INCLUDES =
 # C includes
 C_INCLUDES =  \
 -Iinc \
+-I../common/inc \
 -I/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/CMSIS/Device/ST/STM32L0xx/Include \
 -I/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/CMSIS/Include
 
@@ -133,7 +134,7 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 # LDFLAGS
 #######################################
 # link script
-LDSCRIPT = STM32L021K4Tx_FLASH.ld
+LDSCRIPT = ../common/STM32L021K4Tx_FLASH.ld
 
 # libraries
 LIBS = -lc -lm -lnosys 

@@ -4,6 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
+                "../common/inc",
                 "/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/CMSIS/Device/ST/STM32L0xx/Include",
                 "/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/CMSIS/Include"
             ],

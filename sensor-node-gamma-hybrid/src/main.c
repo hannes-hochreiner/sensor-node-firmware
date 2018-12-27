@@ -54,10 +54,11 @@ int main() {
     msg._rng = (SysTick->VAL);
 
     uint8_t enc_data[32];
+    aes_key_t key = {KEY0, KEY1, KEY2, KEY3};
 
-    volatile result_t aes_res = aes_ecb_encrypt((uint32_t*)&msg, (uint32_t*)enc_data, 8);
+    volatile result_t aes_res = aes_ecb_encrypt(&key, (uint32_t*)&msg, (uint32_t*)enc_data, 8);
     // volatile message_0001_t msg_new;
-    // aes_res = aes_ecb_decrypt((uint32_t*)enc_data, (uint32_t*)&msg_new, 8);
+    // aes_res = aes_ecb_decrypt(&key, (uint32_t*)enc_data, (uint32_t*)&msg_new, 8);
 
     RFM9X_WriteMessage(&rfm98, enc_data, 32);
     RFM9X_GetFlags(&rfm98, &flags);

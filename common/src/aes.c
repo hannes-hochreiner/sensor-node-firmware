@@ -11,27 +11,35 @@ typedef enum {
   AES_DECRYPT
 } aes_dir_t;
 
-result_t aes_ecb(aes_dir_t dir, uint32_t* data_in, uint32_t* data_out, uint8_t length);
+result_t aes_ecb(aes_dir_t dir, aes_key_t* key, uint32_t* data_in, uint32_t* data_out, uint8_t length);
 
-result_t aes_ecb_encrypt(uint32_t* data_in, uint32_t* data_out, uint8_t length) {
-  return aes_ecb(AES_ENCRYPT, data_in, data_out, length);
+result_t aes_ecb_encrypt(aes_key_t* key, uint32_t* data_in, uint32_t* data_out, uint8_t length) {
+  return aes_ecb(AES_ENCRYPT, key, data_in, data_out, length);
 }
 
-result_t aes_ecb_decrypt(uint32_t* data_in, uint32_t* data_out, uint8_t length) {
-  return aes_ecb(AES_DECRYPT, data_in, data_out, length);
+result_t aes_ecb_decrypt(aes_key_t* key, uint32_t* data_in, uint32_t* data_out, uint8_t length) {
+  return aes_ecb(AES_DECRYPT, key, data_in, data_out, length);
 }
 
-result_t aes_ecb(aes_dir_t dir, uint32_t* data_in, uint32_t* data_out, uint8_t length) {
+result_t aes_ecb(aes_dir_t dir, aes_key_t* key, uint32_t* data_in, uint32_t* data_out, uint8_t length) {
   RCC->AHBENR |= (RCC_AHBENR_DMAEN) | (RCC_AHBENR_CRYPEN);
+  // RCC->AHBRSTR = (RCC_AHBRSTR_DMARST) | (RCC_AHBRSTR_CRYPRST);
+  // RCC->AHBRSTR = 0;
   // set key
+  AES->KEYR0 = key->key0;
+  AES->KEYR1 = key->key1;
+  AES->KEYR2 = key->key2;
+  AES->KEYR3 = key->key3;
 
-  // key preparation
-  AES->CR = (0b01 << AES_CR_MODE_Pos) | AES_CR_EN;
+  // decryption key preparation
+  if (dir == AES_DECRYPT) {
+    AES->CR = (0b01 << AES_CR_MODE_Pos) | AES_CR_EN;
 
-  while ((AES->SR) == 0) {}
+    while ((AES->SR) == 0) {}
 
-  if ((AES->SR) != AES_SR_CCF) {
-    return RESULT_ERROR;
+    if ((AES->SR) != AES_SR_CCF) {
+      return RESULT_ERROR;
+    }
   }
 
   dma_tx = STATUS_PENDING;

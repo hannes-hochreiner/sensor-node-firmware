@@ -8,7 +8,14 @@
 
 // TODO: use interrupts to watch for key preparation completion
 
-result_t aes_ecb_encrypt(uint32_t* data_in, uint32_t* data_out, uint8_t length);
-result_t aes_ecb_decrypt(uint32_t* data_in, uint32_t* data_out, uint8_t length);
+typedef struct {
+  uint32_t key0;
+  uint32_t key1;
+  uint32_t key2;
+  uint32_t key3;
+} aes_key_t;
+
+result_t aes_ecb_encrypt(aes_key_t* key, uint32_t* data_in, uint32_t* data_out, uint8_t length);
+result_t aes_ecb_decrypt(aes_key_t* key, uint32_t* data_in, uint32_t* data_out, uint8_t length);
 
 #endif

@@ -3,6 +3,8 @@
 static volatile status_t status_dma_tx = STATUS_PENDING;
 static volatile status_t status_dma_rx = STATUS_PENDING;
 
+void spi_dma_c2_3_handler();
+
 void spi_init() {
   RCC->AHBENR |= (RCC_AHBENR_DMAEN);
   RCC->APB2ENR |= (RCC_APB2ENR_SPI1EN);
@@ -24,18 +26,18 @@ void spi_init() {
 
   GPIOA->BSRR = (GPIO_BSRR_BS_4);
  
-  // RX channel 2
-  // TX channel 3
-  // set CMAR (MA), CPAR (PA), CNDTR (NDT), CCR (EN)
-  DMA1_Channel2->CCR |= (DMA_CCR_MINC) | (DMA_CCR_TEIE) | (DMA_CCR_TCIE);
-  DMA1_Channel3->CCR |= (DMA_CCR_MINC) | (DMA_CCR_TEIE) | (DMA_CCR_TCIE) | (DMA_CCR_DIR);
-  DMA1_CSELR->CSELR |= (1 << (DMA_CSELR_C2S_Pos)) | (1 << (DMA_CSELR_C3S_Pos));
-
   SPI1->CR1 = ((SPI_CR1_MSTR) | (SPI_CR1_BR) | (SPI_CR1_SSM) | (SPI_CR1_SSI));
   SPI1->CR2 = ((SPI_CR2_TXDMAEN) | (SPI_CR2_RXDMAEN));
 }
 
 void spi_transfer(uint8_t* const data, uint16_t length) {
+  // RX channel 2
+  // TX channel 3
+  // set CMAR (MA), CPAR (PA), CNDTR (NDT), CCR (EN)
+  DMA1_Channel2->CCR = (DMA_CCR_MINC) | (DMA_CCR_TEIE) | (DMA_CCR_TCIE);
+  DMA1_Channel3->CCR = (DMA_CCR_MINC) | (DMA_CCR_TEIE) | (DMA_CCR_TCIE) | (DMA_CCR_DIR);
+  DMA1_CSELR->CSELR = (1 << (DMA_CSELR_C2S_Pos)) | (1 << (DMA_CSELR_C3S_Pos));
+
   DMA1_Channel2->CNDTR = length;
   DMA1_Channel3->CNDTR = length;
   DMA1_Channel2->CPAR = (uint32_t)(&(SPI1->DR));
@@ -48,6 +50,7 @@ void spi_transfer(uint8_t* const data, uint16_t length) {
   status_dma_tx = STATUS_PENDING;
   status_dma_rx = STATUS_PENDING;
 
+  add_handler(DMA1_Channel2_3_IRQn, spi_dma_c2_3_handler);
   NVIC_EnableIRQ(DMA1_Channel2_3_IRQn);
   
   SPI1->CR1 |= (SPI_CR1_SPE);
@@ -60,11 +63,13 @@ void spi_transfer(uint8_t* const data, uint16_t length) {
   GPIOA->BSRR = GPIO_BSRR_BS_4;
   SPI1->CR1 &= ~(SPI_CR1_SPE);
 
-  DMA1_Channel2->CCR &= ~(DMA_CCR_EN);
-  DMA1_Channel3->CCR &= ~(DMA_CCR_EN);
+  DMA1_Channel2->CCR = 0;
+  DMA1_Channel3->CCR = 0;
+  NVIC_DisableIRQ(DMA1_Channel2_3_IRQn);
+  remove_handler(DMA1_Channel2_3_IRQn, spi_dma_c2_3_handler);
 }
 
-void DMA1_Channel2_3_IRQHandler() {
+void spi_dma_c2_3_handler() {
   uint32_t status = (DMA1->ISR);
   
   DMA1->IFCR |= DMA_IFCR_CGIF2;
@@ -72,14 +77,13 @@ void DMA1_Channel2_3_IRQHandler() {
 
   if ((status & (DMA_ISR_TEIF2)) == (DMA_ISR_TEIF2)) {
     status_dma_rx = STATUS_ERROR;
-  }
-  if ((status & (DMA_ISR_TCIF2)) == (DMA_ISR_TCIF2)) {
+  } else if ((status & (DMA_ISR_TCIF2)) == (DMA_ISR_TCIF2)) {
     status_dma_rx = STATUS_OK;
   }
+  
   if ((status & (DMA_ISR_TEIF3)) == (DMA_ISR_TEIF3)) {
     status_dma_tx = STATUS_ERROR;
-  }
-  if ((status & (DMA_ISR_TCIF3)) == (DMA_ISR_TCIF3)) {
+  } else if ((status & (DMA_ISR_TCIF3)) == (DMA_ISR_TCIF3)) {
     status_dma_tx = STATUS_OK;
   }
 }

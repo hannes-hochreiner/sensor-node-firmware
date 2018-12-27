@@ -9,5 +9,7 @@
 #include "i2c.h"
 #include "shtc3.h"
 #include "crc.h"
+#include "aes.h"
+#include "message.h"
 
 #endif

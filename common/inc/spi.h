@@ -3,6 +3,7 @@
 
 #include "stm32l0xx.h"
 #include "status.h"
+#include "irq_handler.h"
 
 void spi_init();
 void spi_transfer(uint8_t* const data, uint16_t length);

@@ -40,6 +40,7 @@ src/main.c \
 src/pin_reset.c \
 src/rfm9x.c \
 src/shtc3.c \
+../common/src/rtc.c \
 ../common/src/aes.c \
 ../common/src/irq_handler.c \
 ../common/src/delay.c \

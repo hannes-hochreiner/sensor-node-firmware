@@ -11,5 +11,6 @@
 #include "crc.h"
 #include "aes.h"
 #include "message.h"
+#include "rtc.h"
 
 #endif

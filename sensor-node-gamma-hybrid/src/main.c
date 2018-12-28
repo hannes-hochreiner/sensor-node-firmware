@@ -6,6 +6,7 @@ int main() {
   // STM32L021
   uint32_t message_index = 0;
 
+  rtc_init();
   spi_init();
   pin_reset_init();
   i2c_init();
@@ -67,6 +68,6 @@ int main() {
       RFM9X_GetFlags(&rfm98, &flags);
     }
 
-    delay(1000);
+    rtc_wait_until_next_period();
   }
 }

@@ -34,15 +34,16 @@ result_t rtc_init() {
   RTC->ISR &= ~(RTC_ISR_INIT);
 
   // set wakeup-timer
-  // RTC->WUTR = 60; // about 60 sec
+  RTC->WUTR = 60; // about 60 sec
+#ifdef DEBUG
   RTC->WUTR = 3; // about 3 sec
+#endif
   RTC->CR = ((RTC->CR) & ~(RTC_CR_WUCKSEL)) | 0b100 << (RTC_CR_WUCKSEL_Pos) | (RTC_CR_WUTE) | (RTC_CR_WUTIE); /* (5) */
 
   // lock registers
   RTC->WPR = 0xFE;
   RTC->WPR = 0x64;
 
-  // TODO: nvic
   NVIC_EnableIRQ(RTC_IRQn);
 
   // configure EXTI line 20

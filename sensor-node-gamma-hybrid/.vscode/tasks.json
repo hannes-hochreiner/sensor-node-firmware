@@ -28,7 +28,7 @@
         "focus": false,
         "panel": "shared"
       },
-      "dependsOn":[
+      "dependsOn": [
         "build using make"
       ]
     },
@@ -42,6 +42,12 @@
         "focus": false,
         "panel": "shared"
       }
+    },
+    {
+      "label": "flash prod",
+      "type": "shell",
+      "command": "./prod.sh",
+      "problemMatcher": []
     }
   ]
 }

@@ -13,7 +13,7 @@
 ######################################
 # target
 ######################################
-TARGET = sensor-node-core-bme280
+TARGET = sensor-node-gamma-hybrid
 
 
 ######################################
@@ -40,6 +40,7 @@ src/main.c \
 src/pin_reset.c \
 src/rfm9x.c \
 src/shtc3.c \
+../common/src/system.c \
 ../common/src/rtc.c \
 ../common/src/aes.c \
 ../common/src/irq_handler.c \
@@ -108,12 +109,16 @@ C_DEFS =  \
 -DSTM32L021xx
 
 ifeq ($(DEBUG), 1)
-C_DEFS += \
--DKEY0=0x11223344 \
--DKEY1=0x55667788 \
--DKEY2=0x9900AABB \
--DKEY3=0xCCDDEEFF
+KEY0 = 0x11223344
+KEY1 = 0x55667788
+KEY2 = 0x9900AABB
+KEY3 = 0xCCDDEEFF
 endif
+C_DEFS += \
+-DKEY0=$(KEY0) \
+-DKEY1=$(KEY1) \
+-DKEY2=$(KEY2) \
+-DKEY3=$(KEY3)
 
 # AS includes
 AS_INCLUDES = 

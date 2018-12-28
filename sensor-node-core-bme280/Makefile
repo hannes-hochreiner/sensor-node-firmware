@@ -47,6 +47,7 @@ src/rfm9x_glue.c \
 ../common/src/spi.c \
 ../common/src/i2c.c \
 ../common/system_stm32l0xx.c \
+../common/irq_handler.c
 
 # ASM sources
 ASM_SOURCES =  \

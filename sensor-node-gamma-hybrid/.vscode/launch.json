@@ -9,7 +9,7 @@
       "type": "gdb",
       "request": "launch",
       "gdbpath": "arm-none-eabi-gdb",
-      "target": "./build/sensor-node-core-bme280.elf",
+      "target": "./build/sensor-node-gamma-hybrid.elf",
       "cwd": "${workspaceRoot}",
       "autorun": [
         "target remote | ssh hc1 \"sudo openocd -f /tmp/oo.cfg\"",

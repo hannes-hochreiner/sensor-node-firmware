@@ -38,11 +38,10 @@ int main() {
   RFM9X_SetMode(&rfm98, &setMode);
 
   while (1) {
-    volatile shtc3_data_t shtc3_data;
+    shtc3_data_t shtc3_data;
+    message_0001_t msg;
 
-    volatile shtc3_result_t res = shtc3_get_data(&shtc3, &shtc3_data);
-
-    volatile message_0001_t msg;
+    shtc3_get_data(&shtc3, &shtc3_data);
 
     msg.temperature = shtc3_data.temperature;
     msg.humidity = shtc3_data.humidity;
@@ -57,9 +56,7 @@ int main() {
     uint8_t enc_data[32];
     aes_key_t key = {KEY0, KEY1, KEY2, KEY3};
 
-    volatile result_t aes_res = aes_ecb_encrypt(&key, (uint32_t*)&msg, (uint32_t*)enc_data, 8);
-    // volatile message_0001_t msg_new;
-    // aes_res = aes_ecb_decrypt(&key, (uint32_t*)enc_data, (uint32_t*)&msg_new, 8);
+    aes_ecb_encrypt(&key, (uint32_t*)&msg, (uint32_t*)enc_data, 8);
 
     RFM9X_WriteMessage(&rfm98, enc_data, 32);
     RFM9X_GetFlags(&rfm98, &flags);
@@ -68,6 +65,8 @@ int main() {
       RFM9X_GetFlags(&rfm98, &flags);
     }
 
+    stop_enable();
     rtc_wait_until_next_period();
+    stop_disable();
   }
 }

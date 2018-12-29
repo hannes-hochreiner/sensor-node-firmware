@@ -34,7 +34,7 @@ int main() {
   rfm9x_flags_t flags;
   RFM9X_GetFlags(&rfm98, &flags);
 
-  rfm9x_mode_t setMode = RFM9X_MODE_TRANSMIT;
+  rfm9x_mode_t setMode = RFM9X_MODE_SLEEP;
   RFM9X_SetMode(&rfm98, &setMode);
 
   while (1) {
@@ -58,12 +58,17 @@ int main() {
 
     aes_ecb_encrypt(&key, (uint32_t*)&msg, (uint32_t*)enc_data, 8);
 
+    setMode = RFM9X_MODE_TRANSMIT;
+    RFM9X_SetMode(&rfm98, &setMode);
     RFM9X_WriteMessage(&rfm98, enc_data, 32);
     RFM9X_GetFlags(&rfm98, &flags);
 
     while ((flags & RFM9X_FLAG_PACKET_SENT) != RFM9X_FLAG_PACKET_SENT) {
       RFM9X_GetFlags(&rfm98, &flags);
     }
+
+    setMode = RFM9X_MODE_SLEEP;
+    RFM9X_SetMode(&rfm98, &setMode);
 
     stop_enable();
     rtc_wait_until_next_period();

@@ -26,10 +26,13 @@ int main() {
   };
 
   RFM9X_Init(&rfm98);
+  RFM9X_Reset(&rfm98);
   uint8_t syncWord[] = {0x46, 0xA5, 0xE3};
   RFM9X_SetSyncWord(&rfm98, syncWord, 3);
   uint8_t power = 0x08;
   RFM9X_SetPower(&rfm98, &power);
+  // rfm9x_bit_rate_t bitrate = RFM9X_BIT_RATE_12K5;
+  // RFM9X_SetBitrate(&rfm98, &bitrate);
 
   rfm9x_flags_t flags;
   RFM9X_GetFlags(&rfm98, &flags);
@@ -58,9 +61,9 @@ int main() {
 
     aes_ecb_encrypt(&key, (uint32_t*)&msg, (uint32_t*)enc_data, 8);
 
+    RFM9X_WriteMessage(&rfm98, enc_data, 32);
     setMode = RFM9X_MODE_TRANSMIT;
     RFM9X_SetMode(&rfm98, &setMode);
-    RFM9X_WriteMessage(&rfm98, enc_data, 32);
     RFM9X_GetFlags(&rfm98, &flags);
 
     while ((flags & RFM9X_FLAG_PACKET_SENT) != RFM9X_FLAG_PACKET_SENT) {

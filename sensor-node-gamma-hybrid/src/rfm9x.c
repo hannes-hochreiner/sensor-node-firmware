@@ -44,20 +44,14 @@ void RFM9X_ReadMessage(const rfm9x_t* const rfm9x, read_func callback) {
   callback(data, d[1]);
 }
 
-// void RFM9X_SetBitrate(const rfm9x_t* const rfm9x, const uint32_t* const bitrate) {
-//   uint8_t com = RFM9X_WRITE | RFM9X_REG_BITRATE_MSB;
-//   uint16_t tmp = 32000000 / *bitrate;
-//   uint8_t spi_tmp = tmp >> 8;
+void RFM9X_SetBitrate(const rfm9x_t* const rfm9x, const rfm9x_bit_rate_t* const bitrate) {
+  uint8_t d[3];
 
-//   check(rfm9x->reset_spi_nss_pin())
-//   check(rfm9x->spi_transfer(&com))
-//   check(rfm9x->spi_transfer(&spi_tmp))
-//   spi_tmp = tmp;
-//   check(rfm9x->spi_transfer(&spi_tmp))
-//   check(rfm9x->set_spi_nss_pin())
+  d[0] = RFM9X_WRITE | RFM9X_REG_BITRATE_MSB;
+  memcpy((d + 1), bitrate, 2);
 
-//   return RFM9X_RESULT_OK;
-// }
+  rfm9x->spi_transfer(d, 3);
+}
 
 /*
  * Bitrate (b/s) = FXOSC (32 MHz) / (Bitrate + BitrateFrac / 16)

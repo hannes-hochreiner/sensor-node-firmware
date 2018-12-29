@@ -46,6 +46,13 @@ typedef enum {
   RFM9X_FREQ_DEV_5KHZ = 0x0052,
   RFM9X_FREQ_DEV_50KHZ = 0x0334
 } rfm9x_freq_dev_t;
+typedef enum {
+  RFM9X_BIT_RATE_12K5 = 0x0A00,
+  RFM9X_BIT_RATE_25K = 0x0500,
+  RFM9X_BIT_RATE_50K = 0x0280,
+  RFM9X_BIT_RATE_100K = 0x0140,
+  RFM9X_BIT_RATE_200K = 0x00A0
+} rfm9x_bit_rate_t;
 
 void RFM9X_Init(const rfm9x_t* const rfm9x);
 void RFM9X_Reset(const rfm9x_t* const rfm9x);
@@ -56,7 +63,7 @@ void RFM9X_SetSyncWord(const rfm9x_t* const rfm9x, const uint8_t* const syncWord
 // void RFM9X_GetMode(const rfm9x_t* const rfm9x, rfm9x_mode_t* const mode);
 void RFM9X_SetMode(const rfm9x_t* const rfm9x, const rfm9x_mode_t* const mode);
 void RFM9X_GetFlags(const rfm9x_t* const rfm9x, uint16_t* const flags);
-// void RFM9X_SetBitrate(const rfm9x_t* const rfm9x, const uint32_t* const bitrate);
+void RFM9X_SetBitrate(const rfm9x_t* const rfm9x, const rfm9x_bit_rate_t* const bitrate);
 // void RFM9X_GetBitrate(const rfm9x_t* const rfm9x, uint32_t* const bitrate);
 void RFM9X_WriteMessage(const rfm9x_t* const rfm9x, uint8_t* const data, uint8_t length);
 void RFM9X_ReadMessage(const rfm9x_t* const rfm9x, read_func callback);

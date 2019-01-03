@@ -65,9 +65,9 @@ result_t aes_ecb(aes_dir_t dir, aes_key_t* key, uint32_t* data_in, uint32_t* dat
 
   // encryption
   if (dir == AES_DECRYPT) {
-    AES->CR = (AES_CR_DMAOUTEN) | (AES_CR_DMAINEN) | AES_CR_EN | (0b10 << AES_CR_MODE_Pos);
+    AES->CR = (AES_CR_DMAOUTEN) | (AES_CR_DMAINEN) | AES_CR_EN | (0b10 << AES_CR_DATATYPE_Pos) | (0b10 << AES_CR_MODE_Pos);
   } else {
-    AES->CR = (AES_CR_DMAOUTEN) | (AES_CR_DMAINEN) | AES_CR_EN;
+    AES->CR = (AES_CR_DMAOUTEN) | (AES_CR_DMAINEN) | AES_CR_EN | (0b10 << AES_CR_DATATYPE_Pos);
   }
 
   while ((dma_tx == STATUS_PENDING) || (dma_rx == STATUS_PENDING)) {

@@ -37,9 +37,9 @@ BUILD_DIR = build
 # C sources
 C_SOURCES =  \
 src/main.c \
-src/pin_reset.c \
-src/rfm9x.c \
 src/shtc3.c \
+../common/src/pin_reset.c \
+../common/src/rfm9x_lora.c \
 ../common/src/system.c \
 ../common/src/rtc.c \
 ../common/src/aes.c \

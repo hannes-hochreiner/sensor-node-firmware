@@ -5,7 +5,7 @@
 #include "spi.h"
 #include "delay.h"
 #include "pin_reset.h"
-#include "rfm9x.h"
+#include "rfm9x_lora.h"
 #include "i2c.h"
 #include "shtc3.h"
 #include "crc.h"

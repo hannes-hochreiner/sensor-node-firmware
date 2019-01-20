@@ -24,7 +24,8 @@
               "KEY0",
               "KEY1",
               "KEY2",
-              "KEY3"
+              "KEY3",
+              "SENSOR_ID"
             ],
             "compilerPath": "/bin/clang",
             "cStandard": "c11",

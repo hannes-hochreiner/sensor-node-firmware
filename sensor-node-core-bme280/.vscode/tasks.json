@@ -21,7 +21,7 @@
     {
       "label": "copy openocd config",
       "type": "shell",
-      "command": "scp oo.cfg hc1:/tmp",
+      "command": "scp ../common/oo.cfg hc1:/tmp",
       "presentation": {
         "echo": true,
         "reveal": "never",

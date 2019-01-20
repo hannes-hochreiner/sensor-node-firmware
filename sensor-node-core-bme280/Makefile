@@ -36,25 +36,25 @@ BUILD_DIR = build
 ######################################
 # C sources
 C_SOURCES =  \
-Src/main.c \
-Src/gpio.c \
-Src/spi.c \
-Src/stm32l0xx_it.c \
-/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_gpio.c \
-/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_spi.c \
-/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_dma.c \
-/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_pwr.c \
-/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_exti.c \
-/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_rcc.c \
-/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/STM32L0xx_HAL_Driver/Src/stm32l0xx_ll_utils.c \
-Src/system_stm32l0xx.c  \
-Src/rfm98_glue.c \
-Src/rfm9x.c
+src/main.c \
+src/bme280.c \
+src/bme280_selftest.c \
+src/bme280_glue.c \
+../common/src/rfm9x_glue.c \
+../common/src/pin_reset.c \
+../common/src/rfm9x_lora.c \
+../common/src/delay.c \
+../common/src/spi.c \
+../common/src/i2c.c \
+../common/src/irq_handler.c \
+../common/src/rtc.c \
+../common/src/system.c \
+../common/src/aes.c \
+../common/src/system_stm32l0xx.c
 
 # ASM sources
 ASM_SOURCES =  \
-startup_stm32l021xx.s
-
+../common/startup_stm32l021xx.s
 
 #######################################
 # binaries
@@ -97,7 +97,6 @@ AS_DEFS =
 
 # C defines
 C_DEFS =  \
--DUSE_FULL_LL_DRIVER \
 -DHSE_VALUE=8000000 \
 -DHSE_STARTUP_TIMEOUT=100 \
 -DLSE_STARTUP_TIMEOUT=5000 \
@@ -111,16 +110,29 @@ C_DEFS =  \
 -DDATA_CACHE_ENABLE=1 \
 -DSTM32L021xx
 
+ifeq ($(DEBUG), 1)
+KEY3 = 0x11223344
+KEY2 = 0x55667788
+KEY1 = 0x9900AABB
+KEY0 = 0xCCDDEEFF
+SENSOR_ID = 0xAA55
+C_DEFS += -DDEBUG
+endif
+C_DEFS += \
+-DKEY0=$(KEY0) \
+-DKEY1=$(KEY1) \
+-DKEY2=$(KEY2) \
+-DKEY3=$(KEY3) \
+-DSENSOR_ID=$(SENSOR_ID)
 
 # AS includes
 AS_INCLUDES = 
 
 # C includes
 C_INCLUDES =  \
--IInc \
--I/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/STM32L0xx_HAL_Driver/Inc \
+-Iinc \
+-I../common/inc \
 -I/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/CMSIS/Device/ST/STM32L0xx/Include \
--I/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/CMSIS/Include \
 -I/home/hannes/STM32Cube/Repository/STM32Cube_FW_L0_V1.11.0/Drivers/CMSIS/Include
 
 
@@ -142,7 +154,7 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 # LDFLAGS
 #######################################
 # link script
-LDSCRIPT = STM32L021K4Tx_FLASH.ld
+LDSCRIPT = ../common/STM32L021K4Tx_FLASH.ld
 
 # libraries
 LIBS = -lc -lm -lnosys 

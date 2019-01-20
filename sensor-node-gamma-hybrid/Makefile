@@ -38,6 +38,7 @@ BUILD_DIR = build
 C_SOURCES =  \
 src/main.c \
 src/shtc3.c \
+../common/src/rfm9x_glue.c \
 ../common/src/pin_reset.c \
 ../common/src/rfm9x_lora.c \
 ../common/src/system.c \
@@ -46,9 +47,9 @@ src/shtc3.c \
 ../common/src/irq_handler.c \
 ../common/src/delay.c \
 ../common/src/spi.c \
-../common/src/system_stm32l0xx.c  \
 ../common/src/i2c.c \
-../common/src/crc.c
+../common/src/crc.c \
+../common/src/system_stm32l0xx.c
 
 # ASM sources
 ASM_SOURCES =  \

@@ -37,17 +37,20 @@ BUILD_DIR = build
 # C sources
 C_SOURCES =  \
 src/main.c \
-src/pin_reset.c \
-src/rfm9x.c \
 src/bme280.c \
 src/bme280_selftest.c \
 src/bme280_glue.c \
-src/rfm9x_glue.c \
+../common/src/rfm9x_glue.c \
+../common/src/pin_reset.c \
+../common/src/rfm9x_lora.c \
 ../common/src/delay.c \
 ../common/src/spi.c \
 ../common/src/i2c.c \
-../common/system_stm32l0xx.c \
-../common/irq_handler.c
+../common/src/irq_handler.c \
+../common/src/rtc.c \
+../common/src/system.c \
+../common/src/aes.c \
+../common/src/system_stm32l0xx.c
 
 # ASM sources
 ASM_SOURCES =  \
@@ -107,6 +110,20 @@ C_DEFS =  \
 -DDATA_CACHE_ENABLE=1 \
 -DSTM32L021xx
 
+ifeq ($(DEBUG), 1)
+KEY3 = 0x11223344
+KEY2 = 0x55667788
+KEY1 = 0x9900AABB
+KEY0 = 0xCCDDEEFF
+SENSOR_ID = 0xAA55
+C_DEFS += -DDEBUG
+endif
+C_DEFS += \
+-DKEY0=$(KEY0) \
+-DKEY1=$(KEY1) \
+-DKEY2=$(KEY2) \
+-DKEY3=$(KEY3) \
+-DSENSOR_ID=$(SENSOR_ID)
 
 # AS includes
 AS_INCLUDES = 

@@ -1,7 +1,7 @@
 #ifndef __RFM9X_GLUE_H__
 #define __RFM9X_GLUE_H__
 
-#include "rfm9x.h"
+#include "rfm9x_lora.h"
 #include "spi.h"
 #include "delay.h"
 #include "pin_reset.h"

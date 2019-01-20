@@ -3,27 +3,39 @@
 int main() {
   SystemCoreClockUpdate();
 
-  // STM32L021
+  uint32_t message_index = 0;
 
+  rtc_init();
   spi_init();
-  pin_reset_init();
   i2c_init();
-  // bme280_g_init();
+  pin_reset_init();
+  bme280_g_init();
   rfm9x_g_init();
 
   while (1) {
-    // volatile bme280_g_data_t meas_data;
-    // volatile result_t res_meas = bme280_g_measurement(&meas_data);
-    volatile uint8_t address = 0b0011001;
-    uint8_t comId[] = {0x0F};
-    uint8_t dataId[] = {0x00};
+    bme280_g_data_t meas_data;
+    result_t res_meas = bme280_g_measurement(&meas_data);
+    message_0002_t msg;
 
-    // result_t i2c_res = i2c_write(address, comId, 1);
-    // i2c_res = i2c_read(address, dataId, 1);
+    msg.temperature = meas_data.temperature;
+    msg.humidity = meas_data.humidity;
+    msg.pressure = meas_data.pressure;
+    msg.sensor_id = SENSOR_ID;
+    msg.mcu_id_1 = *(uint32_t*)(UID_BASE);
+    msg.mcu_id_2 = *(uint32_t*)(UID_BASE + 4);
+    msg.mcu_id_3 = *(uint32_t*)(UID_BASE + 8);
+    msg.message_index = message_index++;
+    msg.type = 0x0002;
 
-    uint8_t text[] = "Hello World! Hello World!";
-    rfm9x_g_send_message(text, 25);
+    uint8_t enc_data[32];
+    aes_key_t key = {KEY0, KEY1, KEY2, KEY3};
 
-    delay(500);
+    aes_ecb_encrypt(&key, (uint32_t*)&msg, (uint32_t*)enc_data, 8);
+
+    rfm9x_g_send_message(enc_data, 32);
+
+    stop_enable();
+    rtc_wait_until_next_period();
+    stop_disable();
   }
 }

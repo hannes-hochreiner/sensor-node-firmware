@@ -20,7 +20,12 @@
               "PREFETCH_ENABLE=0",
               "INSTRUCTION_CACHE_ENABLE=1",
               "DATA_CACHE_ENABLE=1",
-              "STM32L021xx"
+              "STM32L021xx",
+              "KEY0",
+              "KEY1",
+              "KEY2",
+              "KEY3",
+              "SENSOR_ID"
             ],
             "compilerPath": "/bin/clang",
             "cStandard": "c11",

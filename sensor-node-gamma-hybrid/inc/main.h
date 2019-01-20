@@ -2,10 +2,9 @@
 #define __MAIN_H__
 
 #include "stm32l0xx.h"
-#include "spi.h"
 #include "delay.h"
 #include "pin_reset.h"
-#include "rfm9x_lora.h"
+#include "rfm9x_glue.h"
 #include "i2c.h"
 #include "shtc3.h"
 #include "crc.h"
